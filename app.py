@@ -58,16 +58,11 @@ with gr.Blocks(title="CTF Vector RAG Gateway", theme=gr.themes.Soft()) as demo:
     search_btn.click(
         fn=ctf_search,
         inputs=[query_input, domain_dropdown, top_k_slider],
-        outputs=output_box
+        outputs=output_box,
+        api_name="query"
     )
 
     gr.Markdown("### 📡 API Endpoints available:\n- `POST /query`: Search knowledge base via JSON\n- `POST /add`: Ingest new challenge writeup\n- `GET /health`: Liveness probe\n- `GET /docs`: Interactive OpenAPI documentation")
 
-# Mount FastAPI app onto Gradio
-app = gr.mount_gradio_app(app, demo, path="/")
-
 if __name__ == "__main__":
-    import uvicorn
-    port = int(os.getenv("PORT", "7860"))
-    print(f"Starting Vector RAG server on port {port}...")
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    demo.launch()
