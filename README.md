@@ -1,3 +1,13 @@
+---
+title: CTF Vector RAG
+emoji: 🧬
+colorFrom: green
+colorTo: blue
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # CTF Vector RAG Gateway
 
 A high-performance, lightweight **Vector RAG (Retrieval-Augmented Generation)** knowledge store and retrieval service for Cybersecurity challenges, CTF writeups, cryptographic algorithms, and exploit templates.

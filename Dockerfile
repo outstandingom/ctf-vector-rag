@@ -4,14 +4,22 @@ WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PORT=8000
+    PORT=7860
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY src/ ./src/
-COPY data/ ./data/
+# Create a non-root user with UID 1000 for Hugging Face Spaces
+RUN useradd -m -u 1000 user
+USER user
+ENV HOME=/home/user \
+    PATH=/home/user/.local/bin:$PATH
 
-EXPOSE 8000
+WORKDIR /app
+
+COPY --chown=user src/ ./src/
+COPY --chown=user data/ ./data/
+
+EXPOSE 7860
 
 CMD ["python", "src/server.py"]
