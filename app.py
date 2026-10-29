@@ -9,7 +9,13 @@ sys.path.insert(0, current_dir)
 import gradio as gr
 from src.server import app, vector_store
 
-def ctf_search(query: str, domain: str, top_k: int):
+try:
+    import spaces
+    has_spaces = True
+except ImportError:
+    has_spaces = False
+
+def _search_core(query: str, domain: str, top_k: int):
     if not query.strip():
         return "Please enter a challenge query or keywords."
 
@@ -26,6 +32,14 @@ def ctf_search(query: str, domain: str, top_k: int):
         output.append(f"### 🎯 [{dom}] {title} `(Score: {round(score, 2)})`\n\n```text\n{doc.page_content}\n```\n\n---\n")
 
     return "\n".join(output) if output else "No matching techniques found."
+
+if has_spaces:
+    @spaces.GPU
+    def ctf_search(query: str, domain: str, top_k: int):
+        return _search_core(query, domain, top_k)
+else:
+    def ctf_search(query: str, domain: str, top_k: int):
+        return _search_core(query, domain, top_k)
 
 with gr.Blocks(title="CTF Vector RAG Gateway", theme=gr.themes.Soft()) as demo:
     gr.Markdown("# 🧬 CTF Vector RAG Knowledge Base")
