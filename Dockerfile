@@ -4,21 +4,23 @@ WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PORT=7860
+    PORT=7860 \
+    PYTHONPATH=/app/src:/app
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Create a non-root user with UID 1000 for Hugging Face Spaces
-RUN useradd -m -u 1000 user
+# Setup non-root user UID 1000 for Hugging Face
+RUN useradd -m -u 1000 user && \
+    mkdir -p /app/data && \
+    chown -R user:user /app
+
+COPY --chown=user:user src/ ./src/
+COPY --chown=user:user data/ ./data/
+
 USER user
 ENV HOME=/home/user \
     PATH=/home/user/.local/bin:$PATH
-
-WORKDIR /app
-
-COPY --chown=user src/ ./src/
-COPY --chown=user data/ ./data/
 
 EXPOSE 7860
 
